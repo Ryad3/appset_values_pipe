@@ -1,16 +1,21 @@
 {{- if .Values.networkPolicy.enabled }}
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
   name: {{ include "buildkitd.fullname" . }}-network-policy
   labels:
     {{- include "buildkitd.labels" . | nindent 4 }}
 spec:
-  endpointSelector: {}
+  podSelector:
+    matchLabels:
+      {{- include "buildkitd.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
   ingress:
-    - fromEndpoints:
+    - from:
       {{- range .Values.networkPolicy.ingress.namespaces }}
-        - matchLabels:
-            io.kubernetes.pod.namespace: {{ . }}
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ . }}
       {{- end }}
 {{- end }}

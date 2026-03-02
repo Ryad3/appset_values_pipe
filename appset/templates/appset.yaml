@@ -9,8 +9,7 @@ spec:
       repoURL: https://github.com/Ryad3/appset_values_pipe
       revision: main
       files:
-      - path: Tools/*.yaml
-        exclude: "Tools/charts/**"
+      - path: config/*.yaml
   template:
     metadata:
       name: '{{ `{{name}}` }}'  # ← Backticks pour échapper
