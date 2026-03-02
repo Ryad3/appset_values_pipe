@@ -21,11 +21,7 @@ spec:
           valueFiles:
           - values.yaml
           values: |-
-            {{"{{"}}- if kindIs "string" .values -{{"}}"}}
-            {{"{{"}} .values {{"}}"}}
-            {{"{{"}}- else -{{"}}"}}
             {{"{{"}} toYaml .values {{"}}"}}
-            {{"{{"}}- end -{{"}}"}}
         repoURL: https://github.com/Ryad3/appset_values_pipe
         path: 'Tools/charts/{{"{{"}}.helm_chart{{"}}"}}'
       destination:
