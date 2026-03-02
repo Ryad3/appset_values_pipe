@@ -1,7 +1,7 @@
 name: buildkitd 
 helm_chart: buildkitd 
 namespace: buildkitd 
-values: |-
+valuesObject:
   replicaCount: 2
 
   resources:
