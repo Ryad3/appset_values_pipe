@@ -20,7 +20,7 @@ spec:
           valueFiles:
           - values.yaml
           valuesObject:
-            {{`{{- toYaml .values }}`}}  # ← Backticks pour échapper
+{{ `            {{- toYaml .values | nindent 12 }}` }}  # ← Backticks pour échapper
         repoURL: https://github.com/Ryad3/appset_values_pipe
         path: Tools/charts/{{ `{{helm_chart}}` }}  # ← Backticks pour échapper
       destination:
