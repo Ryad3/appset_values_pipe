@@ -11,7 +11,7 @@ spec:
       - path: Tools/*.yaml
   template:
     metadata:
-      name: '{{name}}'  # ← Changé ici
+      name: '{{ `{{name}}` }}'  # ← Backticks pour échapper
     spec:
       project: admin
       source:
@@ -19,12 +19,12 @@ spec:
           valueFiles:
           - values.yaml
           values: |
-            {{values}}  # ← Changé ici
+            {{ `{{values}}` }}  # ← Backticks pour échapper
         repoURL: https://github.com/Ryad3/appset_values_pipe
-        path: Tools/charts/{{helm_chart}}  # ← Changé ici
+        path: Tools/charts/{{ `{{helm_chart}}` }}  # ← Backticks pour échapper
       destination:
         server: "https://kubernetes.default.svc"
-        namespace: '{{namespace}}'  # ← Changé ici
+        namespace: '{{ `{{namespace}}` }}'  # ← Backticks pour échapper
       syncPolicy:
         automated:
           prune: true
