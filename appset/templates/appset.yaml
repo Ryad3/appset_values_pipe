@@ -4,27 +4,33 @@ metadata:
   name: appset-tools
   namespace: argocd
 spec:
+  goTemplate: true
   generators:
   - git:
       repoURL: https://github.com/Ryad3/appset_values_pipe
       revision: main
       files:
-      - path: "config/*.yaml"  # ← Votre chemin correct
+      - path: config/*.yaml
   template:
     metadata:
-      name: {{ `'{{name}}'` }}
+      name: '{{"{{"}}.name{{"}}"}}'
     spec:
       project: default
       source:
-        repoURL: https://github.com/Ryad3/appset_values_pipe
-        path: {{ `'Tools/charts/{{helm_chart}}'` }}  # ← Sans le point
         helm:
           valueFiles:
           - values.yaml
-          valuesObject: {{ `{{toYaml .values}}` }}
+          values: |-
+            {{"{{"}}- if kindIs "string" .values {{"}}"}}
+            {{"{{"}} .values {{"}}"}}
+            {{"{{"}}- else {{"}}"}}
+            {{"{{"}} toYaml .values {{"}}"}}
+            {{"{{"}}- end {{"}}"}}
+        repoURL: https://github.com/Ryad3/appset_values_pipe
+        path: 'Tools/charts/{{"{{"}}.helm_chart{{"}}"}}'
       destination:
         server: "https://kubernetes.default.svc"
-        namespace: {{ `'{{namespace}}'` }}  # ← Sans le point
+        namespace: '{{"{{"}}.namespace{{"}}"}}'
       syncPolicy:
         automated:
           prune: true
