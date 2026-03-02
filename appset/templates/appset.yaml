@@ -9,23 +9,22 @@ spec:
       repoURL: https://github.com/Ryad3/appset_values_pipe
       revision: main
       files:
-      - path: config/*.yaml
+      - path: "config/*.yaml"  # ← Votre chemin correct
   template:
     metadata:
-      name: '{{"{{"}}.name{{"}}"}}'
+      name: {{ `'{{name}}'` }}
     spec:
       project: default
       source:
+        repoURL: https://github.com/Ryad3/appset_values_pipe
+        path: {{ `'Tools/charts/{{helm_chart}}'` }}  # ← Sans le point
         helm:
           valueFiles:
           - values.yaml
-          values: |-
-            {{"{{"}} toYaml .values {{"}}"}}
-        repoURL: https://github.com/Ryad3/appset_values_pipe
-        path: 'Tools/charts/{{"{{"}}.helm_chart{{"}}"}}'
+          valuesObject: {{ `{{toYaml .values}}` }}
       destination:
         server: "https://kubernetes.default.svc"
-        namespace: '{{"{{"}}.namespace{{"}}"}}'
+        namespace: {{ `'{{namespace}}'` }}  # ← Sans le point
       syncPolicy:
         automated:
           prune: true
@@ -33,7 +32,7 @@ spec:
           allowEmpty: false
         syncOptions:
         - Validate=false
-        - CreateNamespace=false
+        - CreateNamespace=true
         - PrunePropagationPolicy=foreground
         - PruneLast=true
         retry:
