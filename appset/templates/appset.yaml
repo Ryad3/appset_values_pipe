@@ -4,6 +4,8 @@ metadata:
   name: appset-tools
   namespace: argocd
 spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
   generators:
   - git:
       repoURL: https://github.com/Ryad3/appset_values_pipe
@@ -12,20 +14,24 @@ spec:
       - path: config/*.yaml
   template:
     metadata:
-      name: '{{ `{{name}}` }}'  # ← Backticks pour échapper
+      name: '{{"{{"}}.name{{"}}"}}'
     spec:
       project: default
       source:
         helm:
           valueFiles:
           - values.yaml
-          valuesObject:
-{{ `            {{- toYaml .values | nindent 12 }}` }}  # ← Backticks pour échapper
+          values: |-
+            {{"{{"}}- if kindIs "string" .values -{{"}}"}}
+            {{"{{"}} .values {{"}}"}}
+            {{"{{"}}- else -{{"}}"}}
+            {{"{{"}} toYaml .values {{"}}"}}
+            {{"{{"}}- end -{{"}}"}}
         repoURL: https://github.com/Ryad3/appset_values_pipe
-        path: Tools/charts/{{ `{{helm_chart}}` }}  # ← Backticks pour échapper
+        path: 'Tools/charts/{{"{{"}}.helm_chart{{"}}"}}'
       destination:
         server: "https://kubernetes.default.svc"
-        namespace: '{{ `{{namespace}}` }}'  # ← Backticks pour échapper
+        namespace: '{{"{{"}}.namespace{{"}}"}}'
       syncPolicy:
         automated:
           prune: true
