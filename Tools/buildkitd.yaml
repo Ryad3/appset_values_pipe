@@ -1,0 +1,16 @@
+name: buildkitd 
+helm_chart: buildkitd 
+namespace: buildkitd 
+values: |-
+  replicaCount: 2
+
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: "200m"
+      memory: 512Mi
+
+  volume:
+    size: 2Gi

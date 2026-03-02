@@ -1,0 +1,45 @@
+replicaCount: 1
+
+image:
+  repository: moby/buildkit
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podLabels: {}
+
+resources: {}
+
+volume:
+  storageClassName: managed-csi-premium
+  size: 10Gi
+
+tolerations:
+  - key: 'dedicated'
+    operator: 'Equal'
+    value: 'delivery'
+    effect: 'NoSchedule'
+  - key: 'kubernetes.azure.com/scalesetpriority'
+    operator: 'Equal'
+    value: 'spot'
+    effect: 'NoSchedule'
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: 'rexel.nodepool'
+              operator: 'In'
+              values:
+                - 'delivery'
+
+networkPolicy:
+  enabled: true
+  ingress:
+    namespaces:
+      - bamboo

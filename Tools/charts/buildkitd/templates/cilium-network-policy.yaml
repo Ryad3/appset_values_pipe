@@ -1,0 +1,16 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "buildkitd.fullname" . }}-network-policy
+  labels:
+    {{- include "buildkitd.labels" . | nindent 4 }}
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+      {{- range .Values.networkPolicy.ingress.namespaces }}
+        - matchLabels:
+            io.kubernetes.pod.namespace: {{ . }}
+      {{- end }}
+{{- end }}

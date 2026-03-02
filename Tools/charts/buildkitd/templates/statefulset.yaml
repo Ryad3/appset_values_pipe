@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "buildkitd.fullname" . }}
+  labels:
+    sidecar.istio.io/inject: "false"
+    {{- include "buildkitd.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "buildkitd.fullname" . }}
+  podManagementPolicy: Parallel
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "buildkitd.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "buildkitd.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: buildkitd
+          image: "moby/buildkit:v0.26.2-rootless"
+          imagePullPolicy: IfNotPresent
+          args:
+            - --addr
+            - tcp://0.0.0.0:1234
+            - --oci-worker-no-process-sandbox
+          readinessProbe:
+            tcpSocket:
+              port: 1234
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: 1234
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 6
+          securityContext:
+            seccompProfile:
+              type: Unconfined
+            appArmorProfile:
+              type: Unconfined
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - mountPath: /home/user/.local/share/buildkit
+              name: buildkitd
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: buildkitd
+          ephemeral:
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                storageClassName: {{ .Values.volume.storageClassName }}
+                resources:
+                  requests:
+                    storage: {{ .Values.volume.size }}

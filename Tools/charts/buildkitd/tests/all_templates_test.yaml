@@ -1,0 +1,7 @@
+suite: Full snapshot test
+templates:
+  - "**/*.yaml"
+tests:
+  - it: all manifests should be equal to the snapshot
+    asserts:
+      - matchSnapshot: {}
