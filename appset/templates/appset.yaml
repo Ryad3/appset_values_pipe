@@ -10,11 +10,12 @@ spec:
       revision: main
       files:
       - path: Tools/*.yaml
+        exclude: "Tools/charts/**"
   template:
     metadata:
       name: '{{ `{{name}}` }}'  # ← Backticks pour échapper
     spec:
-      project: admin
+      project: default
       source:
         helm:
           valueFiles:
