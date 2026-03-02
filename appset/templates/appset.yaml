@@ -19,8 +19,8 @@ spec:
         helm:
           valueFiles:
           - values.yaml
-          valuesObject: |
-            {{ `{{values}}` }}  # ← Backticks pour échapper
+          valuesObject:
+            {{`{{- toYaml .values }}`}}  # ← Backticks pour échapper
         repoURL: https://github.com/Ryad3/appset_values_pipe
         path: Tools/charts/{{ `{{helm_chart}}` }}  # ← Backticks pour échapper
       destination:
