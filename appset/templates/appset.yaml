@@ -4,7 +4,6 @@ metadata:
   name: appset-tools
   namespace: argocd
 spec:
-  goTemplate: true
   generators:
   - git:
       repoURL: https://github.com/Ryad3/appset_values_pipe
