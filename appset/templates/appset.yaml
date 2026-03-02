@@ -10,6 +10,8 @@ spec:
       files:
       - path: Tools/*.yaml
   template:
+    metadata:
+      name: '{{"{{"}}name{{"}}"}}'
     spec:
       project: admin
       source:
