@@ -42,8 +42,10 @@ spec:
             factor: 2
             maxDuration: 3m
   templatePatch: |
+    {{"{{"}}- if .valuesObject {{"}}"}}
     spec:
       source:
         helm:
           valuesObject:
-            {{"{{-"}} toYaml .valuesObject | nindent 12 {{"}}"}}
+            {{"{{"}}- toYaml .valuesObject | nindent 12 {{"}}"}}
+    {{"{{"}}- end {{"}}"}}
