@@ -17,9 +17,6 @@ spec:
     spec:
       project: default
       source:
-        helm:
-          values: |
-            {{"{{"}}.values{{"}}"}}
         repoURL: https://github.com/Ryad3/appset_values_pipe
         path: 'Tools/charts/{{"{{"}}.helm_chart{{"}}"}}'
       destination:
@@ -42,10 +39,8 @@ spec:
             factor: 2
             maxDuration: 3m
   templatePatch: |
-    {{"{{"}}- if .valuesObject {{"}}"}}
     spec:
       source:
         helm:
           valuesObject:
             {{"{{"}}- toYaml .valuesObject | nindent 12 {{"}}"}}
-    {{"{{"}}- end {{"}}"}}
